@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="att.css">
+</head>
+<body>
+    <!-- Login Section -->
+    <section id="loginSection">
+        <div class="login-container">
+            <h1>Student Portal</h1>
+            <form id="loginForm" onsubmit="login(event)">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="userType">User Type</label>
+                    <select id="userType">
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="parent">Parent</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboardSection" class="hidden">
+        <header>
+            <h1>Welcome, <span id="userDisplayName"></span></h1>
+            <button onclick="logout()">Logout</button>
+        </header>
+
+        <!-- Student Profile -->
+        <div id="studentProfile" class="dashboard-container hidden">
+            <div class="profile-header">
+                <h2>Student Details</h2>
+                <div class="student-info">
+                    <p>ID: <span id="studentId"></span></p>
+                    <p>Name: <span id="studentName"></span></p>
+                    <p>Department: <span id="studentDepartment"></span></p>
+                    <p>Year: <span id="studentYear"></span></p>
+                </div>
+                <div class="academic-info">
+                    <div class="info-card">
+                        <h3>CGPA</h3>
+                        <p id="studentCGPA"></p>
+                    </div>
+                    <div class="info-card">
+                        <h3>SGPA</h3>
+                        <p id="studentSGPA"></p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Overall Attendance</h3>
+                        <p id="overallAttendance"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-section">
+                <div class="attendance-section">
+                    <h3>Attendance Details</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Total Classes</th>
+                                <th>Attended</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceData"></tbody>
+                    </table>
+                </div>
+
+                <div class="marks-section">
+                    <h3>Academic Performance</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Internal</th>
+                                <th>External</th>
+                                <th>Total</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marksData"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacherDashboard" class="dashboard-container hidden">
+            <h2>Teacher Dashboard</h2>
+            <div class="teacher-actions">
+                <button onclick="openAttendanceModal()">Add Attendance</button>
+                <button onclick="openMarksModal()">Add Marks</button>
+            </div>
+            <div class="students-list">
+                <h3>Students List</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Year</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teacherStudentsList"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="dashboard-container hidden">
+            <h2>Admin Dashboard</h2>
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h3>Total Students</h3>
+                    <p id="totalStudents"></p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Teachers</h3>
+                    <p id="totalTeachers"></p>
+                </div>
+                <div class="stat-card">
+                    <h3>Average CGPA</h3>
+                    <p id="averageCGPA"></p>
+                </div>
+            </div>
+
+            <div class="admin-actions">
+                <button onclick="openAddStudentModal()">Add New Student</button>
+                <button onclick="openAddTeacherModal()">Add New Teacher</button>
+            </div>
+
+            <div class="department-stats">
+                <h3>Department Statistics</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Students</th>
+                            <th>Teachers</th>
+                            <th>Student/Teacher Ratio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="departmentStats"></tbody>
+                </table>
+            </div>
+
+            <div class="students-list">
+                <h3>All Students</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Year</th>
+                            <th>CGPA</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminStudentsList"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Student</h2>
+            <form id="addStudentForm" onsubmit="addNewStudent(event)">
+                <div class="form-group">
+                    <label for="newStudentId">Registration Number</label>
+                    <input type="text" id="newStudentId" required pattern="[0-9]{2}B[0-9]{2}A[0-9]{2}[0-9]{2}" 
+                           title="Format: YYBSSAxxNN (e.g., 22B91A6101)">
+                </div>
+                <div class="form-group">
+                    <label for="newStudentName">Name</label>
+                    <input type="text" id="newStudentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="newStudentDepartment">Department</label>
+                    <select id="newStudentDepartment" required>
+                        <option value="CSE-AIML">CSE-AIML</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newStudentYear">Year</label>
+                    <select id="newStudentYear" required>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                    </select>
+                </div>
+                <button type="submit">Add Student</button>
+                <button type="button" onclick="closeAddStudentModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="attendanceModal" class="modal">
+        <div class="modal-content">
+            <h2>Add Attendance</h2>
+            <form id="addAttendanceForm" onsubmit="addAttendance(event)">
+                <div class="form-group">
+                    <label for="attendanceStudentId">Student ID</label>
+                    <input type="text" id="attendanceStudentId" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="totalClasses">Total Classes</label>
+                    <input type="number" id="totalClasses" required>
+                </div>
+                <div class="form-group">
+                    <label for="attendedClasses">Attended Classes</label>
+                    <input type="number" id="attendedClasses" required>
+                </div>
+                <button type="submit">Save</button>
+                <button type="button" onclick="closeAttendanceModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="marksModal" class="modal">
+        <div class="modal-content">
+            <h2>Add Marks</h2>
+            <form id="addMarksForm" onsubmit="addMarks(event)">
+                <div class="form-group">
+                    <label for="marksStudentId">Student ID</label>
+                    <input type="text" id="marksStudentId" required>
+                </div>
+                <div class="form-group">
+                    <label for="marksSubject">Subject</label>
+                    <input type="text" id="marksSubject" required>
+                </div>
+                <div class="form-group">
+                    <label for="internalMarks">Internal Marks</label>
+                    <input type="number" id="internalMarks" required min="0" max="30">
+                </div>
+                <div class="form-group">
+                    <label for="externalMarks">External Marks</label>
+                    <input type="number" id="externalMarks" required min="0" max="70">
+                </div>
+                <button type="submit">Save</button>
+                <button type="button" onclick="closeMarksModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="att.js"></script>
+</body>
+</html>
